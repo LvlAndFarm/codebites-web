@@ -80,7 +80,7 @@
         components: {ListingBox},
         data() {
             return {
-                listings: this.$store.state.listings,
+
 
                 // Filters/sorting
                 sort: "default",
@@ -97,11 +97,15 @@
             // });
             // Printing a list of the titles on the front page
             // r.getHot().map(post => post.title).then(console.log);
+            this.$store.dispatch("fetchListings");
         },
         computed: {
             filteredListings() {
                 return this.listings
                     .filter(listing => JSON.stringify(listing).toLowerCase().includes(this.search.trim().toLowerCase()))
+            },
+            listings() {
+                return this.$store.state.listings
             }
         },
         methods: {

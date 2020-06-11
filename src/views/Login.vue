@@ -58,6 +58,11 @@
 
             }
         },
+        mounted() {
+            if (this.$route.path.includes("/signup")) {
+                this.signupToggle = true;
+            }
+        },
         methods: {
             async submitLoginForm() {
                 this.$store.dispatch("setLoading", true);
@@ -83,27 +88,40 @@
             },
 
             async submitSignupForm() {
+                this.$store.dispatch("setLoading", true);
                 console.log(this.signupForm);
 
-                // const {email, pass, passConfirm, country, firstName, lastName } = this.signupForm;
-                return;
+                const {email, pass, countryCode, firstName, lastName } = this.signupForm;
+                // return;
+                this.signupForm.disabled = true;
 
-                // fb.auth.createUserWithEmailAndPassword(this.signupForm.email, this.signupForm.password).then(user => {
-                //     this.$store.commit('setCurrentUser', user)
-                //
-                //     // create user obj
-                //     fb.usersCollection.doc(user.uid).set({
-                //         name: this.signupForm.name,
-                //         title: this.signupForm.title
-                //     }).then(() => {
-                //         this.$store.dispatch('fetchUserProfile')
-                //         this.$router.push('/dashboard')
-                //     }).catch(err => {
-                //         console.log(err)
-                //     })
-                // }).catch(err => {
-                //     console.log(err)
-                // })
+                fb.auth.createUserWithEmailAndPassword(email, pass).then(async user => {
+                    await user.user.updateProfile({
+                        displayName: `${firstName} ${lastName}`
+                    });
+
+
+
+                    this.$store.commit('setCurrentUser', user.user);
+
+                    // create user obj
+                    fb.usersCollection.doc(user.user.uid).set({
+                        email,
+                        firstName,
+                        lastName,
+                        countryCode
+                    }).then(() => {
+                        this.$store.dispatch('fetchUserProfile');
+                        this.$router.push('/');
+                        this.$store.dispatch("setLoading", false);
+                        this.signupForm.disabled = true;
+                    }).catch(err => {
+                        console.log(err);
+
+                    })
+                }).catch(err => {
+                    console.log(err)
+                })
             },
 
             hideLoginError() {
@@ -112,6 +130,11 @@
 
             setSignupToggle(toggle) {
                 this.signupToggle = toggle;
+                if (toggle) {
+                    this.$router.push("/signup");
+                } else {
+                    this.$router.push("/login");
+                }
             }
         }
     }

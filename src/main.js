@@ -8,6 +8,11 @@ import store from './store'
 const fb = require('./plugins/firebase');
 
 Vue.config.productionTip = false;
+Vue.config.devtools = true;
+
+import Nl2br from 'vue-nl2br'
+
+Vue.component('nl2br', Nl2br);
 
 let app;
 fb.auth.onAuthStateChanged(user => {
@@ -22,6 +27,7 @@ fb.auth.onAuthStateChanged(user => {
     app.$mount('#app');
     if (user) {
       store.commit('setCurrentUser', user);
+      store.dispatch('fetchUserProfile');
     }
   }
 });

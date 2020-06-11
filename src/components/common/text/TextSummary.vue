@@ -1,7 +1,7 @@
 <template>
     <div>
         <i>        {{truncatedText}}
-            {{isTruncated && "..."}}</i>
+            <span v-if="isTruncated">...</span> </i>
         <a v-if="isTruncated && showMore">More</a>
     </div>
 </template>

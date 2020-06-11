@@ -64,6 +64,7 @@
 
         </ValidationObserver>
 
+        <br/>
 
         <b-field label="Country of residence">
             <b-select placeholder="Select a name" v-model="signupForm.countryCode" required>
@@ -79,6 +80,7 @@
                 </option>
             </b-select>
         </b-field>
+
 
         <div class="field is-grouped">
             <div class="control">
