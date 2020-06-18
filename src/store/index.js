@@ -89,9 +89,14 @@ export default new Vuex.Store({
       })
     },
 
-    async fetchListings({ commit }) {
-      console.log("FETCHING LISTINGS");
-      let snap = await fb.listingsCollection.get();
+    async fetchListings({ commit }, { limit } = {}) {
+      // console.log(options);
+      let snap;
+      if (limit) {
+        snap = await fb.listingsCollection.limitToFirst(limit);
+      } else {
+        snap = await fb.listingsCollection.get();
+      }
       let listings = snap.docs.map(doc => doc.data());
       commit('setListings', listings);
     },

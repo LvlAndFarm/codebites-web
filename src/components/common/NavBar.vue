@@ -48,8 +48,9 @@
 <!--                </button>-->
 
                 <b-navbar-item class="navbar-user-item" slot="trigger" slot-scope="{ active }">
-                    <img class="navbar-avatar" src='https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShaggyMullet&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light'
-                    />
+<!--                    <img class="navbar-avatar" src='https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShaggyMullet&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light'-->
+<!--                    />-->
+                    <avataaars class="navbar-avatar"></avataaars>
                     {{currentUser.displayName}}
                     <b-icon :icon="active ? 'menu-up' : 'menu-down'"></b-icon>
                 </b-navbar-item>
@@ -86,9 +87,11 @@
 
 <script>
     import {currentUser} from "../../plugins/firebase";
+    import Avataaars from "vuejs-avataaars"
 
     export default {
         name: "NavBar",
+        components: {Avataaars},
         props: {
             onSidebarOpen: Function
         },
@@ -122,6 +125,7 @@
 
 <style>
 .navbar-avatar {
+    height: 28px;
     margin-right: 6px;
 }
 

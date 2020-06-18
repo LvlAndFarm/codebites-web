@@ -19,17 +19,7 @@
 
             <div class="column is-2">
 
-                <div class="box listing-user-box">
-                    <img class="listing-user-avatar"  src='https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortRound&accessoriesType=Blank&hairColor=Red&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Yellow'
-                    />
-                    <br/>
-                    <div class="listing-user-name">{{user && `${user.firstName} ${user.lastName}` || "Unknown"}}</div>
-
-                    <div class="tags has-addons">
-                        <span class="tag">Rating</span>
-                        <span class="tag is-primary" :class="rating==-1 ? 'button is-loading': ''">{{rating}}%</span>
-                    </div>
-                </div>
+                <user-box :user="user"/>
 
                 <!--                                    <button class="button is-primary is-large is-fullwidth font-circular">View</button>-->
             </div>
@@ -67,11 +57,13 @@
 <script>
     import TextSummary from "../text/TextSummary";
     import moment from 'moment';
+    import UserBox from "../UserBox";
     const fb = require('../../../plugins/firebase');
 
     export default {
         name: "ListingBox",
         components: {
+            UserBox,
             TextSummary
         },
         props: {

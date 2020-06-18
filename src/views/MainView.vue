@@ -61,7 +61,7 @@
                         <button class="button is-primary is-large is-fullwidth font-circular">Post new listing</button>
                         <br/>
                         <a style="color: indianred; float: right;">
-                            <i style="text-align: right;">Report a problem</i>
+                            <i style="text-align: right;" @click="reportBug()">Report a problem</i>
                         </a>
                     </section>
                 </div>
@@ -103,6 +103,8 @@
             filteredListings() {
                 return this.listings
                     .filter(listing => JSON.stringify(listing).toLowerCase().includes(this.search.trim().toLowerCase()))
+                    .filter(listing => listing.price.amount > this.budgetRange[0])
+                    .filter(listing => this.budgetRange == 100 ||listing.price.amount < this.budgetRange[1])
             },
             listings() {
                 return this.$store.state.listings
@@ -113,6 +115,18 @@
                 let curVal = "£" + val;
                 return val==100?curVal+"+" : curVal;
             },
+
+            reportBug() {
+                this.$buefy.dialog.prompt({
+                    message: `Report a bug`,
+                    inputAttrs: {
+                        placeholder: 'Write a message here...',
+                        maxlength: 1000
+                    },
+                    trapFocus: true,
+                    onConfirm: () => this.$buefy.toast.open(`Bug reported, thank you!`)
+                })
+            }
         }
     }
 </script>
@@ -125,19 +139,6 @@
         color: red;
     }
 
-    .listing-user-avatar {
-        height: 30px;
-        display: inline-block;
-    }
-
-    .listing-user-box {
-        margin: auto;
-        text-align: center;
-    }
-
-    .listing-user-name {
-        margin-bottom: 5px;
-    }
 
     .listing-budget-tag {
         margin-left: 5px;

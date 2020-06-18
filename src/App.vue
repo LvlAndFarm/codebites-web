@@ -51,12 +51,12 @@
 </script>
 
 <style lang="scss">
-    *, .font-circular {
-        font-family: "Circular Std", sans-serif;
+    *, .font-circular, select>option {
+        font-family: "Circular Std", "Font Awesome 5 Free", sans-serif;
     }
 
 #app {
-  font-family: Circular, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Circular, Avenir, Helvetica, Arial, sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
