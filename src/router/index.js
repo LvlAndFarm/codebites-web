@@ -44,6 +44,14 @@ Vue.use(VueRouter)
       component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue')
     },
     {
+      path: '/listing/new',
+      name: 'Post New Listing',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "about" */ '../views/NewListing.vue')
+    },
+    {
       path: '/listing/:linkedid',
       name: 'Listing',
       // route level code-splitting
