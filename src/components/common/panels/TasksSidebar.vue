@@ -3,7 +3,7 @@
         <div class="tabs">
             <ul>
                 <li class="is-active"><a>Active (0)</a></li>
-                <li><a>Posted (0)</a></li>
+                <li><a>Posted ({{listingsNumber}})</a></li>
             </ul>
         </div>
 
@@ -33,7 +33,12 @@
     import TextSummary from "../text/TextSummary";
     export default {
         name: "TasksSidebar",
-        components: {TextSummary}
+        components: {TextSummary},
+        computed: {
+            userProfile: function() { return this.$store.state.userProfile },
+            // displayName: () => this.currentUser&&this.currentUser.displayName
+            listingsNumber:  function() { return this.userProfile&&this.userProfile.listings&&this.userProfile.listings.length }
+        },
     }
 </script>
 
