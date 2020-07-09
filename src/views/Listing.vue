@@ -15,7 +15,7 @@
             <div class="card">
                 <header class="card-header">
                     <p class="card-header-title">
-                        Bidders (3)
+                        Bidders ({{bidders.length}})
                     </p>
                     <a class="card-header-icon" aria-label="more options">
                   <span class="icon">
@@ -30,26 +30,34 @@
                             <tr>
                                 <th>User</th>
                                 <th>Rating</th>
+                                <th v-if="isUserPoster">Profile</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <th>A****h</th>
-                                <th>98%</th>
+                            <tr v-for="bidder in bidders" v-bind:key="bidder.email">
+                                <th>{{bidder.email}}</th>
+                                <th>{{rating(bidder)}}%</th>
+                                <th v-if="isUserPoster"><b-button type="is-primary">View</b-button></th>
                             </tr>
-                            <tr>
-                                <th>A****h</th>
-                                <th>98%</th>
-                            </tr>
-                            <tr>
-                                <th>A****h</th>
-                                <th>98%</th>
-                            </tr>
+<!--                            <tr>-->
+<!--                                <th>A****h</th>-->
+<!--                                <th>98%</th>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <th>A****h</th>-->
+<!--                                <th>98%</th>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <th>A****h</th>-->
+<!--                                <th>98%</th>-->
+<!--                            </tr>-->
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
+
+            <edit-listing-modal :is-active.sync="isEditModalActive" :listing.sync="listing"/>
 
             <div class="card">
                 <header class="card-header">
@@ -71,53 +79,37 @@
                         </ul>
                     </div>
                 </div>
-                <!--            <footer class="card-footer">-->
-                <!--                <a href="#" class="card-footer-item">Save</a>-->
-                <!--                <a href="#" class="card-footer-item">Edit</a>-->
-                <!--                <a href="#" class="card-footer-item">Delete</a>-->
-                <!--            </footer>-->
             </div>
 
             <br/>
 
             <nav class="level">
-                <!--            <p class="level-item has-text-centered">-->
-                <!--                <a class="link is-info">Home</a>-->
-                <!--            </p>-->
-                <!--            <p class="level-item has-text-centered">-->
-                <!--                <a class="link is-info">Menu</a>-->
-                <!--            </p>-->
-                <!--            <p class="level-item has-text-centered">-->
-                <!--                <img src="https://bulma.io/images/bulma-type.png" alt="" style="height: 30px;">-->
-                <!--            </p>-->
-                <!--            <p class="level-item has-text-centered">-->
-                <!--                <a class="link is-info">Reservations</a>-->
-                <!--            </p>-->
-                <!--            <p class="level-item has-text-centered">-->
-                <!--                <a class="link is-info">Contact</a>-->
-                <!--            </p>-->
 
                 <div class="level-left">
-                    <!--                <p class="level-item">-->
-                    <!--                    <a class="button is-success">New</a>-->
-                    <!--                </p>-->
-                    <!--                <p class="level-item">-->
-                    <!--                    <a class="button is-success">New</a>-->
-                    <!--                </p>-->
-                    <!--                <p class="level-item">-->
-                    <!--                    <a class="button is-success">New</a>-->
-                    <!--                </p>-->
+                    <p class="level-item" v-if="!isUserPoster">
+                        <a class="button is-danger">Report</a>
+                    </p>
+
+                    <p class="level-item" v-if="isUserPoster">
+                        <a class="button is-danger">Delete</a>
+                    </p>
                 </div>
 
                 <div class="level-right">
-                    <p class="level-item">
-                        <a class="button is-danger">Report</a>
+                    <p class="level-item" v-if="isUserPoster">
+                        <a class="button is-primary" @click="()=>{isEditModalActive=true}">Edit Listing</a>
                     </p>
-                    <p class="level-item">
+
+                    <p class="level-item" v-if="!isUserPoster">
                         <a class="button is-primary">Message</a>
                     </p>
-                    <p class="level-item">
-                        <a class="button is-success">Bid Now</a>
+                    <p class="level-item" v-if="!hasBidden && !isUserPoster">
+<!--                        <a class="button is-success" :class="hasBidden && 'is-disabled'" @click="bidUser">Bid Now</a>-->
+                        <b-button type="is-success" :disabled="hasBidden" @click="bidUser">Bid now</b-button>
+                    </p>
+                    <p class="level-item" v-if="hasBidden && !isUserPoster">
+                        <!--                        <a class="button is-success" :class="hasBidden && 'is-disabled'" @click="bidUser">Bid Now</a>-->
+                        <b-button type="is-danger" @click="cancelBid">Cancel bid</b-button>
                     </p>
                 </div>
             </nav>
@@ -133,21 +125,36 @@
     import ContentPage from "../components/common/pages/ContentPage";
     import moment from 'moment';
     import UserBox from "../components/common/UserBox";
+    import EditListingModal from "../components/common/listings/EditListingModal";
     const fb = require("../plugins/firebase");
 
     export default {
         name: "Listing",
-        components: {UserBox, ContentPage},
+        components: {EditListingModal, UserBox, ContentPage},
         data() {
             return {
+                selectedProfile: {},
+
+
                 linkedid: this.$route.params.linkedid,
-                listing: {},
+                listing: {
+                    bidders: []
+                },
                 user: null,
+
+                bidders: [],
+
+                isEditModalActive: false
             }
         },
         async mounted() {
+            await this.$store.dispatch("setLoading", true);
+
             await this.loadListing();
             await this.loadUser();
+
+            await this.loadBiddersInfo();
+            await this.$store.dispatch("setLoading", false);
         },
         computed: {
             price() {
@@ -159,22 +166,17 @@
 
                 return moment(this.listing.created_on.toDate()).fromNow();
             },
+            userProfile: function() { return this.$store.state.userProfile },
+
+            hasBidden() { return this.listing.bidders.includes(this.userProfile._id) },
+
+            isUserPoster() { return this.listing.user_id===this.userProfile._id },
         },
         methods: {
             async loadListing() {
                 let snap = await fb.listingsCollection.where("_linkedid", "==", this.linkedid).get();
                 if (!snap.empty) {
-                    // await snap.docs[0].ref.update({
-                    //     description: "Some people on r/beermoney use the Prolific Assistant Chrome extension.\n" +
-                    //         "\n" +
-                    //         "It's ass.\n" +
-                    //         "\n" +
-                    //         "I'll put up $100 for someone to remake this extension with less bugs, faster searching (faster than the 60 second minimum on the current extension), but also probably not too low for Prolific to get mad.\n" +
-                    //         "\n" +
-                    //         "More customization filters/notifications. (ex: Only notify you with sound if a study is shorter than a certain amount of time, or only notify you if it pays more than $x per hour, or it's overall pay is higher than $y).\n" +
-                    //         "\n" +
-                    //         "Shoot me a PM if you think you have what it takes."
-                    // });
+                    // this.listingId = snap.docs[]
                     this.listing = snap.docs[0].data();
                 }
             },
@@ -192,6 +194,74 @@
             parseTimestamp(ts) {
                 if (!ts) return "";
                 return moment(ts.toDate()).toString();
+            },
+
+            async loadBiddersInfo() {
+                let bidders = [];
+                await Promise.all(this.listing.bidders.map(async bid => {
+                    let snap = await fb.usersCollection.doc(bid).get();
+                    if (snap.exists) {
+                        let bidder = snap.data();
+                        bidders.push(bidder);
+                    }
+                }))
+                this.bidders = bidders;
+            },
+
+            rating(user) {
+                if (!user) return -1;
+                if (!user.total) return 100;
+                const {total, positive, negative} = user.rating;
+                const neutral = total - positive - negative;
+                const weightedScore = positive + neutral*0.5;
+                return ((weightedScore/total)*100).toFixed(0);
+            },
+
+            async bidUser() {
+                await this.$store.dispatch("setLoading", true);
+                // this.bidders.push(this.user._id);
+
+                await fb.listingsCollection.doc(this.listing._id).update({
+                    bidders: [
+                        ...this.listing.bidders,
+                        this.userProfile._id
+                    ]
+                });
+
+                await this.loadListing();
+
+                await this.loadBiddersInfo();
+
+                await this.$store.dispatch("setLoading", false);
+
+                // setTimeout(() => {
+                //     this.$store.dispatch("setLoading", false);
+                // }, 1000)
+
+                // this.loadBiddersInfo();
+            },
+
+            async cancelBid() {
+                await this.$store.dispatch("setLoading", true);
+                // this.bidders.push(this.user._id);
+
+                let updatedBidders = this.listing.bidders.filter(bidder => !(bidder===this.userProfile._id));
+
+                await fb.listingsCollection.doc(this.listing._id).update({
+                    bidders: updatedBidders
+                });
+
+                await this.loadListing();
+
+                await this.loadBiddersInfo();
+
+                await this.$store.dispatch("setLoading", false);
+
+                // setTimeout(() => {
+                //     this.$store.dispatch("setLoading", false);
+                // }, 1000)
+
+                // this.loadBiddersInfo();
             }
         }
     }
