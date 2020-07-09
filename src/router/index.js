@@ -52,12 +52,36 @@ Vue.use(VueRouter)
       component: () => import(/* webpackChunkName: "about" */ '../views/NewListing.vue')
     },
     {
+      path: '/listing/:linkedid/manage',
+      name: 'Manage Listing',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "about" */ '../views/Listing/Manage.vue')
+    },
+    {
       path: '/listing/:linkedid',
       name: 'Listing',
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ '../views/Listing.vue')
+    },
+    {
+      path: '/profile/me',
+      name: 'My Profile',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "about" */ '../views/Profile/Me.vue')
+    },
+    {
+      path: '/profile/:username',
+      name: 'Profile',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "about" */ '../views/Profile.vue')
     },
     { path: '*', redirect: '/' },
   ]
