@@ -4,7 +4,9 @@
 <!--        />-->
         <avataaars class="user-avatar"></avataaars>
         <br/>
-        <div class="user-name">{{user && `${user.firstName} ${user.lastName}` || "Unknown"}}
+        <div class="user-name">
+            <router-link :to="'/profile/' + user.username">{{user && `${user.firstName} ${user.lastName}` || "Unknown"}}</router-link>
+            &nbsp;
             <b-tooltip label="Verified"
                        position="is-bottom"
                        animated class="username-verified">
