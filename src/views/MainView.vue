@@ -9,7 +9,16 @@
                     <h2 class="subtitle">
                         Coding gigs for all
                     </h2>
-                    <button class="button is-primary is-large font-circular">How does it work?</button>
+                    <button class="button is-primary is-large font-circular" @click="()=>{isIntroModalActive=true}">How does it work?</button>
+
+                    <b-modal :active.sync="isIntroModalActive"
+                             has-modal-card
+                             trap-focus
+                             :destroy-on-hide="false"
+                             aria-role="dialog"
+                             aria-modal>
+                        <intro-modal/>
+                    </b-modal>
                 </div>
             </div>
         </section>
@@ -58,7 +67,10 @@
                             </b-field>
                         </div>
 
-                        <button class="button is-primary is-large is-fullwidth font-circular">Post new listing</button>
+                        <router-link to="/listing/new">
+                            <button class="button is-primary is-large is-fullwidth font-circular">Post new listing</button>
+                        </router-link>
+
                         <br/>
                         <a style="color: indianred; float: right;">
                             <i style="text-align: right;" @click="reportBug()">Report a problem</i>
@@ -75,9 +87,10 @@
 
 
     import ListingBox from "../components/common/listings/ListingBox";
+    import IntroModal from "../components/home/intro-modal";
     export default {
         name: "MainView",
-        components: {ListingBox},
+        components: {IntroModal, ListingBox},
         data() {
             return {
 
@@ -85,7 +98,9 @@
                 // Filters/sorting
                 sort: "default",
                 budgetRange: [0, 100],
-                search: ""
+                search: "",
+
+                isIntroModalActive: false,
             }
         },
         mounted() {
@@ -102,9 +117,10 @@
         computed: {
             filteredListings() {
                 return this.listings
+                    .filter(listing => listing.status==="listed")
                     .filter(listing => JSON.stringify(listing).toLowerCase().includes(this.search.trim().toLowerCase()))
                     .filter(listing => listing.price.amount > this.budgetRange[0])
-                    .filter(listing => this.budgetRange == 100 ||listing.price.amount < this.budgetRange[1])
+                    .filter(listing => this.budgetRange[1] === 100 ||listing.price.amount < this.budgetRange[1])
             },
             listings() {
                 return this.$store.state.listings
