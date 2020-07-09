@@ -26,7 +26,7 @@
         <footer class="footer">
             <div class="content has-text-centered">
                 <p>
-                    <strong>Codebites</strong> by <a href="https://jgthms.com">Codebites Ltd</a>.
+                    <strong>Codebites</strong> by <a href="https://wsabihi.com">Walid N. Sabihi</a>.
                     <br/>
                     Copyright © 2020 Codebites Ltd
                     <br/><br/>
