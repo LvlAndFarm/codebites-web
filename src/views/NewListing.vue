@@ -14,62 +14,7 @@
                     <b-step-item step="1" label="Details" :clickable="isStepsClickable">
                         <h1 class="title has-text-centered">Listing Details</h1>
 
-                        <section>
-                            <b-field horizontal label="Title">
-                                <b-input name="subject" expanded></b-input>
-                            </b-field>
-
-<!--                            <b-field horizontal label="From">-->
-<!--                                <b-input name="name" placeholder="Name" expanded></b-input>-->
-<!--                                <b-input name="email" type="email" placeholder="nobody@nowhere.com" expanded></b-input>-->
-<!--                            </b-field>-->
-
-<!--                            <b-field horizontal label="Topic">-->
-<!--                                <b-select placeholder="Select a topic">-->
-<!--                                    <option value="1">Bulma</option>-->
-<!--                                    <option value="2">Vue.js</option>-->
-<!--                                    <option value="3">Buefy</option>-->
-<!--                                </b-select>-->
-<!--                            </b-field>-->
-
-                            <b-field horizontal label="Description">
-                                <b-input type="textarea"></b-input>
-                            </b-field>
-
-                            <b-field horizontal label="Tags">
-                                <b-taginput
-                                        v-model="tags"
-                                        :data="filteredTags"
-                                        autocomplete
-                                        :allow-new="allowNew"
-                                        :open-on-focus="openOnFocus"
-                                        field="user.first_name"
-                                        icon="label"
-                                        placeholder="Add a tag"
-                                        @typing="getFilteredTags">
-                                </b-taginput>
-                            </b-field>
-
-                            <b-field horizontal label="Price">
-                                <b-field>
-                                    <b-input name="price" expanded></b-input>
-                                    <b-select placeholder="Currency">
-                                        <option>$ (USD)</option>
-                                        <option>£ (GBP)</option>
-                                        <option>€ (EUR)</option>
-                                    </b-select>
-                                </b-field>
-                            </b-field>
-
-<!--                            <b-field horizontal>&lt;!&ndash; Label left empty for spacing &ndash;&gt;-->
-<!--                                <p class="control">-->
-<!--                                    <button class="button is-primary">-->
-<!--                                        Send message-->
-<!--                                    </button>-->
-<!--                                </p>-->
-<!--                            </b-field>-->
-
-                        </section>
+                        <details-form :listing-details="listingDetails"/>
 
                     </b-step-item>
 
@@ -82,19 +27,53 @@
                                 from the authorised funds.
                             </p>
 
+                            <br/>
+
+                            <b-field horizontal label="Total amount">
+                                <b-field>
+                                    <b-input name="price" expanded value="300" :disabled="true"></b-input>
+                                    <p class="control">
+                                        <span class="button is-static">£ (GBP)</span>
+                                    </p>
+                                </b-field>
+                            </b-field>
+
                             <b-field horizontal label="Payment account">
-                                <b-select placeholder="Account">
-                                    <option>
-                                            walid.********@***mail.com
-                                    </option>
-                                    <option>1209109</option>
-                                    <option>1231289</option>
-                                </b-select>
+                                <v-select :clearable="false" :searchable="false" :options="paymentOptions">
+                                    <template v-slot:option="option">
+                                        <span><img class="payment-option-dropdown" :src="option.icon"/> </span>
+                                        {{ option.label }}
+                                    </template>
+
+                                    <template #selected-option="option">
+                                        <span><img class="payment-option-selected" :src="option.icon"/> </span>
+                                        {{ option.label }}
+                                    </template>
+
+                                    <template #list-footer>
+<!--                                        <li style="text-align: center">-->
+                                        <a aria-label="reply" @click="addPaymentMethod">
+                                            <b-icon class="payment-option-add" pack="fas" icon="plus"></b-icon>
+                                            <span class="icon-label">Add new payment method</span>
+                                        </a>
+<!--                                        </li>-->
+                                    </template>
+                                </v-select>
                             </b-field>
 
                             <br/>
 
-<!--                            <v-select :searchable="false" :options="['Canada', 'United States']"></v-select>-->
+<!--                            <v-select :searchable="false" :options="paymentOptions">-->
+<!--                                <template v-slot:option="option">-->
+<!--                                    <span><img class="payment-option" :src="option.icon"/> </span>-->
+<!--                                    {{ option.label }}-->
+<!--                                </template>-->
+
+<!--                                <template #selected-option="option">-->
+<!--                                    <span><img class="payment-option" :src="option.icon"/> </span>-->
+<!--                                    {{ option.label }}-->
+<!--                                </template>-->
+<!--                            </v-select>-->
                         </section>
                     </b-step-item>
 
@@ -133,16 +112,27 @@
     import ContentPage from "../components/common/pages/ContentPage";
 
     import "vue-select/dist/vue-select.css";
+    import DetailsForm from "../components/common/listings/DetailsForm";
 
 
 
-    const tags = ["JavaScript", "React", "Shopify", "Vue", "TypeScript", "C#", "C++", "C", "Firebase", "ExpressJS"];
+
 
     export default {
         name: "NewListing",
-        components: {ContentPage},
+        components: {DetailsForm, ContentPage},
         data() {
             return {
+                listingDetails: {
+                    title: "",
+                    description: "",
+                    price: {
+                        amount: "",
+                        currency: "gbp"
+                    },
+                    // currency: "GBP",
+                },
+
                 activeStep: 0,
 
                 showSocial: false,
@@ -159,22 +149,35 @@
                 labelPosition: 'bottom',
                 mobileMode: 'minimalist',
 
-
-                // Tags field
-                filteredTags: tags,
-                isSelectOnly: false,
-                tags: [],
-                allowNew: false,
-                openOnFocus: false
+                // Payment accounts:
+                paymentOptions: [
+                    {
+                        label: "walid.*******@***mail.com",
+                        icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/PayPal_Logo_Icon_2014.svg/26px-PayPal_Logo_Icon_2014.svg.png",
+                    },
+                    {
+                        label: "BANK 99-88-77 21313123",
+                        icon: "https://cdn.onlinewebfonts.com/svg/img_489946.png",
+                    }
+                ]
             }
         },
         methods: {
-            getFilteredTags(text) {
-                this.filteredTags = tags.filter((option) => {
-                    return option.user.first_name
-                        .toString()
-                        .toLowerCase()
-                        .indexOf(text.toLowerCase()) >= 0
+
+            addPaymentMethod() {
+                this.$buefy.dialog.prompt({
+                    message: `Add payment method`,
+                    inputAttrs: {
+                        placeholder: 'Write a message here...',
+                        maxlength: 1000
+                    },
+                    trapFocus: true,
+                    onConfirm: (value) => {
+                        this.paymentOptions.push({
+                            label: value
+                        });
+                        this.$buefy.toast.open(`Payment method added`);
+                    }
                 })
             }
         }
@@ -184,5 +187,25 @@
 <style scoped>
     h1.title {
         color: #363636 !important;
+    }
+
+    .payment-option-selected {
+        height: 23px;
+        padding-top: 3px;
+        margin-right: 8px;
+        padding-left: 4px;
+    }
+
+    .payment-option-dropdown {
+        height: 23px;
+        padding-top: 3px;
+        margin-right: 8px;
+        /*padding-left: 4px;*/
+    }
+
+    .payment-option-add {
+        padding-top: 3px;
+        margin-right: 16px;
+        padding-left: 30px;
     }
 </style>
