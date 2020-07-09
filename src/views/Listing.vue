@@ -218,6 +218,11 @@
             },
 
             async bidUser() {
+                if ((!this.userProfile) || this.userProfile!={}) {
+                    await this.$router.push('/login');
+                    return;
+                }
+
                 await this.$store.dispatch("setLoading", true);
                 // this.bidders.push(this.user._id);
 
