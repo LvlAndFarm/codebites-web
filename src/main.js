@@ -7,10 +7,14 @@ import store from './store'
 
 const fb = require('./plugins/firebase');
 
-Vue.config.productionTip = false;
-Vue.config.devtools = true;
+Vue.config.productionTip = true;
+// Vue.config.devtools = true;
 
 import Nl2br from 'vue-nl2br'
+
+import vSelect from "vue-select";
+
+Vue.component("v-select", vSelect);
 
 Vue.component('nl2br', Nl2br);
 
