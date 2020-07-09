@@ -1,5 +1,5 @@
 <template>
-    <section class="hero is-primary is-bold is-fullheight">
+    <section class="main-page">
         <div class="container is-fluid" >
             <div class="columns is-gapless">
                 <div class="column">
@@ -40,5 +40,11 @@
 
     div.box > h3.title.is-3 {
         color: #363636;
+    }
+
+    .main-page {
+        min-height: 100vh;
+        background-image: linear-gradient(141deg, #3725d4 0%, #7957d5 71%, #9b67df 100%);
+
     }
 </style>
