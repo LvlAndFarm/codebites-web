@@ -52,6 +52,11 @@
 <!--                    />-->
                     <avataaars class="navbar-avatar"></avataaars>
                     {{currentUser.displayName}}
+                    <b-tooltip label="Verified"
+                               position="is-bottom"
+                               animated class="username-verified" v-if="userProfile.verified">
+                        <img class="navbar-username-verified" src="https://upload.wikimedia.org/wikipedia/commons/e/e0/Check_green_icon.svg"/>
+                    </b-tooltip>
                     <b-icon :icon="active ? 'menu-up' : 'menu-down'"></b-icon>
                 </b-navbar-item>
 
@@ -103,6 +108,7 @@
         },
         computed: {
             currentUser: function() { return this.$store.state.currentUser },
+            userProfile: function() { return this.$store.state.userProfile },
             displayName: () => currentUser&&currentUser.displayName
         },
         methods: {
@@ -150,4 +156,12 @@
         padding-top: 2px;
         padding-bottom: 1px;
     }
+
+.navbar-username-verified {
+    height: 20px;
+    padding-bottom: 3px;
+    vertical-align: middle;
+    padding-left: 5px;
+    padding-top: 3px;
+}
 </style>
