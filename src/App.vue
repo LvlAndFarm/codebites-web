@@ -22,6 +22,18 @@
         </b-sidebar>
 
         <b-loading :is-full-page="true" :active.sync="isLoading" :can-cancel="true"></b-loading>
+
+        <footer class="footer">
+            <div class="content has-text-centered">
+                <p>
+                    <strong>Codebites</strong> by <a href="https://jgthms.com">Codebites Ltd</a>.
+                    <br/>
+                    Copyright © 2020 Codebites Ltd
+                    <br/><br/>
+                    <a>Contact Us</a> | <a>Privacy Policy</a> | <a>Terms & Conditions</a>
+                </p>
+            </div>
+        </footer>
     </div>
 </template>
 
@@ -37,7 +49,7 @@
       drawer: null,
 
         open: false,
-        overlay: false,
+        overlay: true,
         fullheight: true,
         fullwidth: false,
         right: true
@@ -84,5 +96,21 @@
 
     .p-1 {
         padding: 1em;
+    }
+
+    footer.footer {
+        background-color: #eeeeee;
+        padding: 3rem 1.5rem 3rem;
+    }
+
+
+
+    /* Modal z-index fix */
+    .modal>.animation-content {
+        z-index: 1;
+    }
+
+    .main-text-color {
+        color: #363636 !important;
     }
 </style>
