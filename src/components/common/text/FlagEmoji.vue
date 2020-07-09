@@ -1,6 +1,7 @@
 <template>
     <span>
         <span class="flag-emoji">{{countryFlag}}</span>
+<!--        <img :src="`https://www.countryflags.io/${countryCode}/flat/64.png`">-->
         <span>
             {{showName ? countryName : ""}}
         </span>
