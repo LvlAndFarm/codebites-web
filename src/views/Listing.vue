@@ -218,7 +218,7 @@
             },
 
             async bidUser() {
-                if ((!this.userProfile) || this.userProfile!={}) {
+                if ((!this.userProfile) || this.userProfile!=={}) {
                     await this.$router.push('/login');
                     return;
                 }

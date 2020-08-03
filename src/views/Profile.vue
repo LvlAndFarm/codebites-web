@@ -1,11 +1,11 @@
 <template>
     <content-page>
         <template v-slot:main>
-            <div style="display: flex">
-                <div>
-                    <avataaars style="width: 300px; height: 300px;"></avataaars>
+            <div class="columns">
+                <div class="column is-narrow">
+                    <avataaars style="width: 300px; height: 300px; display: block; margin: auto;"></avataaars>
                 </div>
-                <div style="padding-left: 20px; padding-top: 30px;">
+                <div class="column" style="padding-left: 20px; padding-top: 30px;">
                     <h2 class="title is-2 main-text-color">
                         {{profile.firstName}}&nbsp;{{profile.lastName}}
                         <b-tooltip label="Verified"
@@ -16,7 +16,7 @@
 
                         <div class="tags has-addons user-rating-badge">
                             <span class="tag">Rating</span>
-                            <span class="tag is-primary" :class="rating==-1 ? 'button is-loading': ''">Over 9000%</span>
+                            <span class="tag is-primary" :class="profile.ratingPc===-1 ? 'button is-loading': ''">{{profile.ratingPc}}%</span>
                         </div>
                     </h2>
 
@@ -30,7 +30,7 @@
                     <ul>
                         <li>📌 {{profile.location}}</li>
                         <li>🌐 <a target="_blank">{{profile.website}}</a></li>
-                        <li>Technologies: <span class="tag" v-for="tag in tags" :key="tag">{{tag}}</span></li>
+                        <li>Technologies: <span class="tag" v-for="tag in profile.tags" :key="tag">{{tag}}</span></li>
                     </ul>
 
 
@@ -51,12 +51,14 @@
 
             <div class="tabs">
                 <ul>
-                    <li class="is-active"><a class="main-text-color">Reviews (9999)</a></li>
+                    <li class="is-active"><a class="main-text-color">Reviews ({{profile.reviews.length}})</a></li>
                     <li><a>Portfolio</a></li>
 <!--                    <li><a>Videos</a></li>-->
 <!--                    <li><a>Documents</a></li>-->
                 </ul>
             </div>
+
+            <review-card v-for="review in profile.reviews" v-bind:key="review._id" :review="review"/>
 
             <div class="card">
 <!--                <div class="card-image">-->
@@ -121,14 +123,19 @@
 <script>
     import ContentPage from "../components/common/pages/ContentPage";
     import Avataaars from "vuejs-avataaars";
+    import ReviewCard from "../components/profile/ReviewCard";
 
     const fb = require("../plugins/firebase");
 
     export default {
         name: "Profile",
-        components: {ContentPage, Avataaars},
+        components: {ReviewCard, ContentPage, Avataaars},
         props: {
             selfProfile: Object,
+            isSelf: {
+                type: Boolean,
+                default: false
+            }
         },
         data() {
             return {
@@ -136,7 +143,7 @@
                 username: this.$route.params.username,
 
                 profile_: {},
-                tags: ["React", "Vue", "Angular", "Next", "Redux", "MobX"],
+                // tags: ["React", "Vue", "Angular", "Next", "Redux", "MobX"],
 
 
             }
@@ -152,22 +159,18 @@
                 this.loadUserProfile();
                 await this.$store.dispatch("setLoading", false);
             } else {
-                await this.$store.dispatch("setLoading", true);
+                // await this.$store.dispatch("setLoading", true);
             }
 
         },
         async updated() {
-            if (this.profile_ && this.profile_!=={}) {
+            if (this.profile && this.profile!=={}) {
                 await this.$store.dispatch("setLoading", false);
             }
         },
         methods: {
             async loadUserProfile() {
-                let snap = await fb.usersCollection.where("username", "==", this.username).get();
-                if (!snap.empty) {
-                    // this.listingId = snap.docs[]
-                    this.profile_ = snap.docs[0].data();
-                }
+                this.profile_ = await fb.getProfile(this.username);
             }
         }
     }

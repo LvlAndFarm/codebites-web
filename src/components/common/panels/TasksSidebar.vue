@@ -1,11 +1,18 @@
 <template>
     <div>
-        <div class="tabs">
-            <ul>
-                <li class="is-active"><a>Active (0)</a></li>
-                <li><a>Posted ({{listingsNumber}})</a></li>
-            </ul>
-        </div>
+<!--        <div class="tabs">-->
+<!--            <ul >-->
+<!--                <li class="is-active"><a>Active (0)</a></li>-->
+<!--                <li><a>Posted ({{listingsNumber}})</a></li>-->
+<!--                <li><a>Saved ({{listingsNumber}})</a></li>-->
+<!--            </ul>-->
+<!--        </div>-->
+
+        <b-tabs size="is-regular" class="block">
+            <b-tab-item label="Active (0)"></b-tab-item>
+            <b-tab-item label="Posted (0)"></b-tab-item>
+            <b-tab-item label="Saved (0)"></b-tab-item>
+        </b-tabs>
 
         <div class="box">
             <div class="columns is-gapless">

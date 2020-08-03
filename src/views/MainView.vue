@@ -9,7 +9,7 @@
                     <h2 class="subtitle">
                         Coding gigs for all
                     </h2>
-                    <button class="button is-primary is-large font-circular" @click="()=>{isIntroModalActive=true}">How does it work?</button>
+<!--                    <button class="button is-primary is-large font-circular" @click="()=>{isIntroModalActive=true}">How does it work?</button>-->
 
                     <b-modal :active.sync="isIntroModalActive"
                              has-modal-card

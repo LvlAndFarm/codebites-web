@@ -79,14 +79,10 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    fetchUserProfile({ commit, state }) {
+    async fetchUserProfile({ commit, state }) {
       console.log("FETCHING USER PROFILE");
-      fb.usersCollection.doc(state.currentUser.uid).get().then(res => {
-        console.log("res", res);
-        commit('setUserProfile', res.data())
-      }).catch(err => {
-        console.log(err)
-      })
+      let profile = await fb.getProfileById(state.currentUser.uid);
+      commit('setUserProfile', profile);
     },
 
     async fetchListings({ commit }, { limit } = {}) {

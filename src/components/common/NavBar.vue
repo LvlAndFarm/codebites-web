@@ -60,7 +60,9 @@
                     <b-icon :icon="active ? 'menu-up' : 'menu-down'"></b-icon>
                 </b-navbar-item>
 
-                <b-dropdown-item aria-role="listitem">Profile</b-dropdown-item>
+                <b-dropdown-item aria-role="listitem" has-link>
+                    <router-link to="/profile/me">Profile</router-link>
+                </b-dropdown-item>
                 <b-dropdown-item aria-role="listitem">Settings</b-dropdown-item>
                 <b-dropdown-item aria-role="listitem" @click="logout()">
                     <div style="color: darkred">

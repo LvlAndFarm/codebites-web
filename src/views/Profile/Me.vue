@@ -1,5 +1,5 @@
 <template>
-    <profile :self-profile="userProfile">
+    <profile :is-self="true" :self-profile="userProfile">
 
     </profile>
 </template>

@@ -39,7 +39,7 @@
                             </b-field>
 
                             <b-field horizontal label="Payment account">
-                                <v-select :clearable="false" :searchable="false" :options="paymentOptions">
+                                <v-select :clearable="false" :searchable="false" :options="paymentOptions" v-model="listingDetails.paymentAccount">
                                     <template v-slot:option="option">
                                         <span><img class="payment-option-dropdown" :src="option.icon"/> </span>
                                         {{ option.label }}
@@ -79,28 +79,42 @@
 
                     <b-step-item :step="showSocial ? '4' : '3'" label="Finish" :clickable="isStepsClickable" disabled>
                         <h1 class="title has-text-centered">Finish</h1>
-                        Lorem ipsum dolor sit amet.
+
+                        <ListingFieldsList :listing-details="listingDetails"/>
                     </b-step-item>
 
                     <template
                             v-if="true"
                             slot="navigation"
                             slot-scope="{previous, next}">
-                        <b-button
-                                outlined
-                                type="is-danger"
-                                :disabled="previous.disabled"
-                                @click.prevent="previous.action">
+                      <div style="display: flex; flex-direction: row; justify-content: space-between">
+                        <div>
+                          <b-button
+                              outlined
+                              :disabled="previous.disabled"
+                              @click.prevent="previous.action"
+                              v-if="!next.disabled">
                             Previous
-                        </b-button>
-                        &nbsp;
-                        <b-button
-                                outlined
-                                type="is-success"
-                                :disabled="next.disabled"
-                                @click.prevent="next.action">
+                          </b-button>
+                          &nbsp;
+                          <b-button
+                              outlined
+                              :disabled="next.disabled"
+                              @click.prevent="next.action"
+                              v-if="!next.disabled">
                             Next
-                        </b-button>
+                          </b-button>
+                        </div>
+
+                        <div>
+                          <b-button
+                              type="is-success"
+                              v-if="next.disabled"
+                              @click.prevent="submitListing">
+                            Submit
+                          </b-button>
+                        </div>
+                      </div>
                     </template>
                 </b-steps>
             </section>
@@ -109,10 +123,11 @@
 </template>
 
 <script>
-    import ContentPage from "../components/common/pages/ContentPage";
+    import ContentPage from "../../components/common/pages/ContentPage";
 
     import "vue-select/dist/vue-select.css";
-    import DetailsForm from "../components/common/listings/DetailsForm";
+    import DetailsForm from "../../components/common/listings/DetailsForm";
+    import ListingFieldsList from "@/components/common/listings/ListingFieldsList";
 
 
 
@@ -120,7 +135,7 @@
 
     export default {
         name: "NewListing",
-        components: {DetailsForm, ContentPage},
+        components: {ListingFieldsList, DetailsForm, ContentPage},
         data() {
             return {
                 listingDetails: {
@@ -130,9 +145,12 @@
                         amount: "",
                         currency: "gbp"
                     },
+                   tags: [],
+                  paymentAccount: null
                     // currency: "GBP",
                 },
 
+                // Steps component fields
                 activeStep: 0,
 
                 showSocial: false,
@@ -154,10 +172,12 @@
                     {
                         label: "walid.*******@***mail.com",
                         icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/PayPal_Logo_Icon_2014.svg/26px-PayPal_Logo_Icon_2014.svg.png",
+                        id: "saokokaoksdok21312"
                     },
                     {
                         label: "BANK 99-88-77 21313123",
                         icon: "https://cdn.onlinewebfonts.com/svg/img_489946.png",
+                        id: "okoads1312312"
                     }
                 ]
             }
@@ -179,6 +199,14 @@
                         this.$buefy.toast.open(`Payment method added`);
                     }
                 })
+            },
+
+            async submitListing() {
+              await this.$store.dispatch("setLoading", true);
+              setTimeout(async () => {
+                await this.$store.dispatch("setLoading", false);
+                await this.$swal('Hello Vue world!!!');
+              }, 2000)
             }
         }
     }
